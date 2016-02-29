@@ -1,0 +1,346 @@
+<!DOCTYPE html
+<html>
+  <head>
+    <title>Web Development with Rust</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="public/custom.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle, less-space
+
+# Web Development with Rust
+
+## Hire me for the JS,<br> keep me for the Rust
+
+### [Rust Amsterdam](http://www.meetup.com/Rust-Amsterdam/events/227827508/) — 2016-03-02 
+### Jan-Erik Rediger — [@badboy_](https://twitter.com/badboy_)
+
+---
+class: center, middle, less-space
+
+## Jan-Erik Rediger
+### [@badboy_](https://twitter.com/badboy_) — janerik@rediger.net
+
+## Student, Open Source Enthusiast, OTS Coach & Conf Organizer
+
+???
+Hi, I'm Jan-Erik
+I'm a Computer Science student.
+I work on a lot of Open Source projects.
+If you use Redis you may know me as the maintainer of hiredis and other libraries.
+So if hiredis broke your build once, I'm sorry.
+I'm also a coach at OpenTechSchool events and organized a conference once.
+
+Back in August 2014 I started to learn Rust and by now I published about a dozen small libraries and projects.
+
+---
+class: center, middle, bigger
+
+<iframe src="http://time.hellorust.com/legacy">
+
+---
+class: center, middle, bigger
+
+# [Are we web yet?](http://arewewebyet.org/)*
+
+.footnote2[\* [arewewebyet.org](http://arewewebyet.org/)]
+
+---
+class: bigger, bullets
+
+# Software Stack
+
+- Backend
+- &nbsp;&nbsp; Data store &amp; Access
+- &nbsp;&nbsp; Logic / API
+- Frontend
+- &nbsp;&nbsp; HTML, CSS 
+- &nbsp;&nbsp; JavaScript
+
+---
+class: center, middle, nearly-huge
+
+# Backend
+
+---
+class: command
+
+# Iron
+
+```bash
+fn hello(_: &mut Request) -> IronResult<Response> {
+    Ok(Response::with((status::Ok, "Hello World!")))
+}
+
+Iron::new(hello).http("localhost:3000").unwrap();
+```
+
+.footnote2[[ironframework.io](http://ironframework.io/)]
+
+---
+class: command
+
+# Nickel.rs
+
+```bash
+let mut server = Nickel::new();
+
+server.utilize(router! {
+    get "**" => |_req, _res| {
+        "Hello world!"
+    }
+});
+
+server.listen("127.0.0.1:6767");
+```
+
+.footnote2[[nickel.rs](http://nickel.rs/)]
+
+---
+class: bullets, bigger
+
+# Hyper (HTTP library)
+
+- low-level
+- type-safe
+- client &amp; server
+
+.footnote2[[hyper.rs](http://hyper.rs/)]
+
+---
+class: bullets, bigger
+
+# Hyper (soon)
+
+- Asynchronous IO
+
+.footnote2[[hyper.rs](http://hyper.rs/)]
+
+---
+class: bullets, bigger
+
+# Database access
+
+- [MySQL](https://crates.io/crates/mysql)
+- [Postgres](https://crates.io/crates/postgres)
+- [SQLite](https://crates.io/crates/rusqlite)
+- [Redis](https://crates.io/crates/redis)
+
+.footnote[Everything above is a link ;)]
+
+---
+class: bigger, command
+
+# Diesel
+
+### Rust:
+
+```bash
+Post::belonging_to(user).load(&connection)
+```
+
+### Executed SQL:
+
+```sql
+SELECT * FROM posts WHERE user_id = 1;
+```
+
+.footnote2[[diesel.rs](http://diesel.rs/)]
+
+---
+class: center, middle, bigger
+
+<iframe src="http://time.hellorust.com/app">
+
+---
+class: center, middle, bigger
+
+# Ruby
+
+---
+class: center, middle, bigger, striked
+
+# Ruby
+## Rust
+
+---
+class: center, middle, nearly-huge
+
+# Frontend
+
+---
+class: center, middle, bigger
+
+# How do we run Rust in the Frontend?
+
+---
+class: center, middle
+
+![Emscripten](media/emscripten-logo.png)
+
+.footnote2[[emscripten.org](http://emscripten.org)]
+
+---
+class: center
+
+# Turning Rust into JavaScript:
+
+# [rust-webplatform](https://github.com/tcr/rust-webplatform)
+
+.footnote2[by tcr, tomaka and AerialX]
+
+---
+class: command
+
+# DOM Handling
+
+```bash
+let document = webplatform::init();
+
+let track = document.element_query("#track");
+track.on("click", |_e| {
+    toggle_timer(&document);
+});
+load_dom(&document);
+```
+
+---
+class: command
+
+# Glue code
+
+```bash
+fn ajax<F: FnMut(String) + 'a>(&self,
+                               url: &str, f: F) {
+  unsafe {
+  let b = Box::new(f);
+   let a = &*b as *const _;
+   js!{(url, a as *const libc::c_void,
+        caller::<F> as *const libc::c_void)
+       br#"
+       jQuery.ajax({url: UTF8ToString($0)})
+         .done(function(data) {
+         Runtime.dynCall('vii', $2, [$1,
+           allocate(intArrayFromString(data),
+                    'i8', ALLOC_STACK)]);
+       …
+```
+
+???
+
+'
+
+---
+class: center, middle, bigger
+
+<iframe src="http://time.hellorust.com/app">
+
+---
+class: center, middle, bigger
+
+# JavaScript
+
+---
+class: center, middle, bigger, striked
+
+# JavaScript
+## Rust
+
+---
+class: center, middle, nearly-huge
+
+# Browser
+
+---
+class: center, middle, bigger
+
+# Servo
+
+![Servo Screenshot](media/screenshot.png)
+
+---
+class: center, middle, bigger
+
+![Servo](media/servo-desktop.png)
+
+---
+class: center, middle, bigger
+
+<video controls preload="auto">
+    <source src="http://localhost:8000/timetracker-flame-rust.mp4" type="video/mp4">
+</video>
+
+---
+class: center, middle, bigger
+
+# C++
+
+---
+class: center, middle, bigger, striked
+
+# C++
+## Rust
+
+---
+class: bullets
+
+# Recap
+
+- Backend
+- &nbsp;&nbsp; Frameworks (Iron, Nickel, ...)
+- &nbsp;&nbsp; Databases adapters (SQL, Redis, ...)
+- Frontend
+- &nbsp;&nbsp; Template languages
+- &nbsp;&nbsp; Emscripten
+
+---
+class: center, middle
+
+# Is all of this a good idea?
+## ABSOLUTELY
+
+---
+class: center, middle
+
+# Ok, probably it's not
+
+
+---
+class: center, middle, bigger
+
+# Or maybe it is:<br>[webassembly](https://github.com/WebAssembly/design/blob/master/README.md)\* is coming
+
+.footnote2[\*"a binary format for the web"]
+
+
+---
+class: center, middle, bigger
+
+![WASM](media/tweet.png)
+
+---
+class: center, middle, bigger
+
+
+# [AreWeWebYet.org](http://www.arewewebyet.org/)*
+
+### Jan-Erik Rediger
+### [@badboy_](https://twitter.com/badboy_) — janerik@rediger.net
+
+
+.footnote2[\*Page not by me, but great resource]
+
+???
+
+You can build stuff!
+
+  </textarea>
+    <script src="public/remark.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
